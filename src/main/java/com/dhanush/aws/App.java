@@ -14,6 +14,7 @@ public class App
 			S3BucketEventsHandler.createS3Bucket();
 			SQSQueueEventsHandler.createQueue();
 			System.out.println("All resource request sent wait for 1 min...");	
+			
 		} 
 		catch (Exception exception)
 		{
