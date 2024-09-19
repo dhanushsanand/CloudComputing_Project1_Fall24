@@ -19,6 +19,7 @@ public class EC2EventsHandler
 	private static final EC2EventsHandler SINGLETON = new EC2EventsHandler();
 	private static final AmazonEC2 EC2 = AmazonEC2ClientBuilder.defaultClient();
 	private static EC2InstanceDetails ec2InstanceDetails = null;
+	private static final String AMI_ID = "ami-085f9c64a9b75eed5";
 	
 	private EC2EventsHandler()
 	{
@@ -30,18 +31,18 @@ public class EC2EventsHandler
 		return SINGLETON;
 	}
 	
-	public static void createEC2Instance(final String amiId) throws AmazonEC2Exception
+	public static void createEC2Instance() throws AmazonEC2Exception
 	{
-		System.out.println("Sending Resource request to create EC2 Instnace with ami id:" + amiId);
+		System.out.println("Sending Resource request to create EC2 Instnace with ami id:" + AMI_ID);
 		RunInstancesRequest runInstancesRequest = new RunInstancesRequest();
-		runInstancesRequest.withImageId(amiId).withInstanceType(InstanceType.T2Micro).withMaxCount(1).withMinCount(1).withKeyName("dshivana");
+		runInstancesRequest.withImageId(AMI_ID).withInstanceType(InstanceType.T2Micro).withMaxCount(1).withMinCount(1).withKeyName("dshivana");
 		RunInstancesResult runInstancesResponse = EC2.runInstances(runInstancesRequest);
 		String reservationId = runInstancesResponse.getReservation().getInstances().get(0).getInstanceId();
-		System.out.println("\nSuccessfully started EC2 instance with Reservation ID:"+reservationId+ " based on AMI:"+amiId);
+		System.out.println("Successfully started EC2 instance with Reservation ID:"+reservationId+ " based on AMI:"+AMI_ID);
 		ec2InstanceDetails = new EC2InstanceDetailsBuilder().setEC2Instance(EC2).setInstanceID(reservationId).build();
 	}
 	
-	public static void printCreatedInstance()
+	public static void listInstances()
 	{
 		Filter runningInstances = new Filter("instance-state-name");
 		runningInstances.withValues("running");

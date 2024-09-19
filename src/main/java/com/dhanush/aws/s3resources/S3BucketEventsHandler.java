@@ -1,6 +1,7 @@
 package com.dhanush.aws.s3resources;
 
 import java.io.File;
+import java.util.List;
 import javax.swing.JFileChooser;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -11,10 +12,14 @@ import com.amazonaws.services.s3.model.Region;
 
 public class S3BucketEventsHandler 
 {
-	
 	private static final AmazonS3 S3 = AmazonS3ClientBuilder.defaultClient();
-	private static final String BUCKET_NAME = "testBucketdshivana";
+	private static final String BUCKET_NAME = "testbucketdshivana";
+	private static String keyName = "";
 	
+	private S3BucketEventsHandler() 
+	{
+		
+	}
 	
 	public static void createS3Bucket() 
 	{
@@ -37,12 +42,22 @@ public class S3BucketEventsHandler
 
 	private static void uploadToS3(File selectedFile)
 	{
-		String keyName = selectedFile.getName();
+		keyName = selectedFile.getName();
 		PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET_NAME, keyName, selectedFile);
 		S3.putObject(putObjectRequest);
 		System.out.println("Successfully Uploaded file "+keyName+" into S3 bucket with name:"+BUCKET_NAME);
 	}
+	
+	public static void listS3Buckets() 
+	{
+		List<Bucket> buckets = S3.listBuckets();
+		buckets.forEach(bucket -> System.out.println(bucket.getName()));
+	}
 
-	public static void deleteBucket() {
+	public static void deleteBucket() 
+	{
+		S3.deleteObject(BUCKET_NAME, keyName);
+		S3.deleteBucket(BUCKET_NAME);
+		System.out.println("Successfully Deleted Bucket:"+BUCKET_NAME);
 	}
 }

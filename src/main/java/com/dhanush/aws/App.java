@@ -10,10 +10,17 @@ public class App
 	{
 		try 
 		{
-			EC2EventsHandler.createEC2Instance("ami-085f9c64a9b75eed5");
+			System.out.println("All resource request sent wait for 1 min...");	
+			EC2EventsHandler.createEC2Instance();
 			S3BucketEventsHandler.createS3Bucket();
 			SQSQueueEventsHandler.createQueue();
-			System.out.println("All resource request sent wait for 1 min...");	
+			
+			EC2EventsHandler.listInstances();
+			S3BucketEventsHandler.listS3Buckets();
+			SQSQueueEventsHandler.listQueues();
+			
+			S3BucketEventsHandler.uploadFileToS3Bucket();
+			SQSQueueEventsHandler.sendMessage();
 			
 		} 
 		catch (Exception exception)
