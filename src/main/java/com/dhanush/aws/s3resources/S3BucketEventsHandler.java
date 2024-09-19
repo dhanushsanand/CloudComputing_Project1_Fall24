@@ -15,6 +15,7 @@ public class S3BucketEventsHandler
 	private static final AmazonS3 S3 = AmazonS3ClientBuilder.defaultClient();
 	private static final String BUCKET_NAME = "testBucketdshivana";
 	
+	
 	public static void createS3Bucket() 
 	{
 		System.out.println("\nSending Resource Request to Create S3 bucket with name:" + BUCKET_NAME);

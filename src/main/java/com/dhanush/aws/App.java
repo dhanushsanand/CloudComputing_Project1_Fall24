@@ -13,12 +13,13 @@ public class App
 			EC2EventsHandler.createEC2Instance("ami-085f9c64a9b75eed5");
 			S3BucketEventsHandler.createS3Bucket();
 			SQSQueueEventsHandler.createQueue();
-			System.out.println("All resource request sent wait for 1 min...");
-			
-		} catch (Exception exception)
+			System.out.println("All resource request sent wait for 1 min...");	
+		} 
+		catch (Exception exception)
 		{
 			System.out.println(exception.getMessage());
-		} finally 
+		} 
+		finally 
 		{
 			EC2EventsHandler.terminateEC2Instances();
 			S3BucketEventsHandler.deleteBucket();
