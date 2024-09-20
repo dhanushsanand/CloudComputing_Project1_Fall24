@@ -30,8 +30,9 @@ public class SQSQueueEventsHandler
 	
 	public static void createQueue() 
 	{
+		System.out.println("Sending Resource Request to create SQS Queue");
 		queueResult = SQS.createQueue(QUEUE_NAME);
-		System.out.println("The following queue was created with queue URL: "+ queueResult.getQueueUrl());
+		System.out.println("The following queue was created with URL: "+ queueResult.getQueueUrl());
 	}
 	
 	public static void listQueues()

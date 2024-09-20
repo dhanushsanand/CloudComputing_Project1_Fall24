@@ -14,6 +14,9 @@ public class App
 			EC2EventsHandler.createEC2Instance();
 			S3BucketEventsHandler.createS3Bucket();
 			SQSQueueEventsHandler.createQueue();
+			System.out.println("Resources created successfully, waiting for 1 min");
+			
+			waitTime(60000);
 			
 			EC2EventsHandler.listInstances();
 			S3BucketEventsHandler.listS3Buckets();
@@ -24,6 +27,7 @@ public class App
 			SQSQueueEventsHandler.countOfMessages();
 			SQSQueueEventsHandler.receiveQueueMessages();
 			SQSQueueEventsHandler.countOfMessages();
+			waitTime(10000);
 		} 
 		catch (Exception exception)
 		{
@@ -34,6 +38,23 @@ public class App
 			EC2EventsHandler.terminateEC2Instances();
 			S3BucketEventsHandler.deleteBucket();
 			SQSQueueEventsHandler.deleteQueue();
+			
+			waitTime(20000);
+			EC2EventsHandler.listInstances();
+			S3BucketEventsHandler.listS3Buckets();
+			SQSQueueEventsHandler.listQueues();
+		}
+	}
+
+	private static void waitTime(long waitTime)
+	{
+		try
+		{
+			Thread.sleep(waitTime);
+		} catch (InterruptedException exception) 
+		{
+			System.out.println(exception.getMessage());
+			Thread.currentThread().interrupt();
 		}
 	}
 }

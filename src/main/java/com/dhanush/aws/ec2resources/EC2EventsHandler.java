@@ -16,19 +16,13 @@ import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 
 public class EC2EventsHandler
 {
-	private static final EC2EventsHandler SINGLETON = new EC2EventsHandler();
 	private static final AmazonEC2 EC2 = AmazonEC2ClientBuilder.defaultClient();
-	private static EC2InstanceDetails ec2InstanceDetails = null;
 	private static final String AMI_ID = "ami-085f9c64a9b75eed5";
+	private static String reservationID = "";
 	
 	private EC2EventsHandler()
 	{
 		
-	}
-	
-	public static EC2EventsHandler getInstance()
-	{
-		return SINGLETON;
 	}
 	
 	public static void createEC2Instance() throws AmazonEC2Exception
@@ -37,9 +31,8 @@ public class EC2EventsHandler
 		RunInstancesRequest runInstancesRequest = new RunInstancesRequest();
 		runInstancesRequest.withImageId(AMI_ID).withInstanceType(InstanceType.T2Micro).withMaxCount(1).withMinCount(1).withKeyName("dshivana");
 		RunInstancesResult runInstancesResponse = EC2.runInstances(runInstancesRequest);
-		String reservationId = runInstancesResponse.getReservation().getInstances().get(0).getInstanceId();
-		System.out.println("Successfully started EC2 instance with Reservation ID:"+reservationId+ " based on AMI:"+AMI_ID);
-		ec2InstanceDetails = new EC2InstanceDetailsBuilder().setEC2Instance(EC2).setInstanceID(reservationId).build();
+		reservationID = runInstancesResponse.getReservation().getInstances().get(0).getInstanceId();
+		System.out.println("Successfully started EC2 instance with Reservation ID:"+reservationID+ " based on AMI:"+AMI_ID);
 	}
 	
 	public static void listInstances()
@@ -56,7 +49,7 @@ public class EC2EventsHandler
 	public static void terminateEC2Instances()
 	{
 		TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest();
-		terminateInstancesRequest.withInstanceIds(ec2InstanceDetails.getInstanceID());
-		ec2InstanceDetails.getEC2Instnace().terminateInstances(terminateInstancesRequest);
+		terminateInstancesRequest.withInstanceIds(reservationID);
+		EC2.terminateInstances(terminateInstancesRequest);
 	}
 }
