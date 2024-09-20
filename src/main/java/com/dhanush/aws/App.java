@@ -21,7 +21,9 @@ public class App
 			
 			S3BucketEventsHandler.uploadFileToS3Bucket();
 			SQSQueueEventsHandler.sendMessage();
-			
+			SQSQueueEventsHandler.countOfMessages();
+			SQSQueueEventsHandler.receiveQueueMessages();
+			SQSQueueEventsHandler.countOfMessages();
 		} 
 		catch (Exception exception)
 		{

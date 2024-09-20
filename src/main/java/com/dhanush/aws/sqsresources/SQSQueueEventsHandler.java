@@ -1,11 +1,14 @@
 package com.dhanush.aws.sqsresources;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import com.amazonaws.services.sqs.model.CreateQueueResult;
+import com.amazonaws.services.sqs.model.GetQueueAttributesResult;
 import com.amazonaws.services.sqs.model.ListQueuesRequest;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.Message;
@@ -66,7 +69,10 @@ public class SQSQueueEventsHandler
 		}
 	}
 	
-	public static void countOfMessages() {
-		System.out.println("Number of Messages in Queue:"+SQS.receiveMessage(queueResult.getQueueUrl()).getMessages().size()); 
+	public static void countOfMessages()
+	{
+		GetQueueAttributesResult result = SQS.getQueueAttributes(queueResult.getQueueUrl(),Arrays.asList("ApproximateNumberOfMessages") );
+		Integer numberOfMessages = Integer.parseInt(result.getAttributes().get("ApproximateNumberOfMessages"));
+		System.out.println("Number of Messages in Queue:"+numberOfMessages); 
 	}
 }
