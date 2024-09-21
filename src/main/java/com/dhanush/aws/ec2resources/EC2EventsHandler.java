@@ -25,14 +25,14 @@ public class EC2EventsHandler
 		
 	}
 	
-	public static void createEC2Instance() throws AmazonEC2Exception
+	public static void createEC2Instance(String amiId) throws AmazonEC2Exception
 	{
-		System.out.println("Sending Resource request to create EC2 Instnace with ami id:" + AMI_ID);
+		System.out.println("\n\nSending Resource request to create EC2 Instnace with ami id:" + amiId);
 		RunInstancesRequest runInstancesRequest = new RunInstancesRequest();
-		runInstancesRequest.withImageId(AMI_ID).withInstanceType(InstanceType.T2Micro).withMaxCount(1).withMinCount(1).withKeyName("dshivana");
+		runInstancesRequest.withImageId(amiId).withInstanceType(InstanceType.T2Micro).withMaxCount(1).withMinCount(1);
 		RunInstancesResult runInstancesResponse = EC2.runInstances(runInstancesRequest);
 		reservationID = runInstancesResponse.getReservation().getInstances().get(0).getInstanceId();
-		System.out.println("Successfully started EC2 instance with Reservation ID:"+reservationID+ " based on AMI:"+AMI_ID);
+		System.out.println("\nSuccessfully started EC2 instance with Reservation ID:"+reservationID+ " based on AMI:"+amiId);
 	}
 	
 	public static void listInstances()
@@ -43,7 +43,11 @@ public class EC2EventsHandler
 		describeInstancesRequest.withFilters(runningInstances);
         DescribeInstancesResult response = EC2.describeInstances(describeInstancesRequest);
         List<Reservation> reservations = response.getReservations();
-        reservations.forEach(reservation -> reservation.getInstances().forEach(instance -> System.out.println("The following Instances were found:"+instance.getInstanceId())));
+        if (reservations.isEmpty()) {
+			System.out.println("\nNo EC2 Instances Found");
+			return;
+		}
+        reservations.forEach(reservation -> reservation.getInstances().forEach(instance -> System.out.println("\nThe following Running Instances were found:"+instance.getInstanceId())));
 	}
 	
 	public static void terminateEC2Instances()
@@ -51,5 +55,6 @@ public class EC2EventsHandler
 		TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest();
 		terminateInstancesRequest.withInstanceIds(reservationID);
 		EC2.terminateInstances(terminateInstancesRequest);
+		System.out.println("\nterminated the instance with Reservation ID:"+reservationID);
 	}
 }

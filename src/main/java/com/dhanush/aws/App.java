@@ -9,25 +9,28 @@ public class App
 	public static void main(String[] args) 
 	{
 		try 
-		{
-			System.out.println("All resource request sent wait for 1 min...");	
-			EC2EventsHandler.createEC2Instance();
+		{	
+			EC2EventsHandler.createEC2Instance(args[0]);
 			S3BucketEventsHandler.createS3Bucket();
 			SQSQueueEventsHandler.createQueue();
-			System.out.println("Resources created successfully, waiting for 1 min");
+			System.out.println("\nResources created successfully, waiting for 1 min, In the meantime check if resources have been created in AWS console");
 			
 			waitTime(60000);
-			
+			System.out.println("\nListing Created Resources Below:");
 			EC2EventsHandler.listInstances();
 			S3BucketEventsHandler.listS3Buckets();
 			SQSQueueEventsHandler.listQueues();
 			
-			S3BucketEventsHandler.uploadFileToS3Bucket();
+			System.out.println("\nWaiting Sometime before uploading file to S3 Bucket and sending message through SQS Queue");
+			waitTime(20000);
+			S3BucketEventsHandler.uploadFileToS3Bucket(args[1]);
 			SQSQueueEventsHandler.sendMessage();
 			SQSQueueEventsHandler.countOfMessages();
 			SQSQueueEventsHandler.receiveQueueMessages();
 			SQSQueueEventsHandler.countOfMessages();
-			waitTime(10000);
+			
+			System.out.println("Waiting sometime before proceeding to Delete the resources that were created");
+			waitTime(30000);
 		} 
 		catch (Exception exception)
 		{
@@ -35,11 +38,13 @@ public class App
 		} 
 		finally 
 		{
+			
 			EC2EventsHandler.terminateEC2Instances();
 			S3BucketEventsHandler.deleteBucket();
 			SQSQueueEventsHandler.deleteQueue();
 			
-			waitTime(20000);
+			System.out.println("\nDeleted Resources Waiting for 1 minute to check if resources have been deleted");
+			waitTime(60000);
 			EC2EventsHandler.listInstances();
 			S3BucketEventsHandler.listS3Buckets();
 			SQSQueueEventsHandler.listQueues();

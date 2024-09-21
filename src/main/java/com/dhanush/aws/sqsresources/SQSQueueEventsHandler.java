@@ -30,9 +30,9 @@ public class SQSQueueEventsHandler
 	
 	public static void createQueue() 
 	{
-		System.out.println("Sending Resource Request to create SQS Queue");
+		System.out.println("\nSending Resource Request to create SQS Queue");
 		queueResult = SQS.createQueue(QUEUE_NAME);
-		System.out.println("The following queue was created with URL: "+ queueResult.getQueueUrl());
+		System.out.println("\nThe following queue was created with URL: "+ queueResult.getQueueUrl());
 	}
 	
 	public static void listQueues()
@@ -40,23 +40,29 @@ public class SQSQueueEventsHandler
 		ListQueuesRequest request = new ListQueuesRequest();
 		request.setQueueNamePrefix(QUEUE_NAME);
 		ListQueuesResult result = SQS.listQueues(request);
-		result.getQueueUrls().forEach(System.out::println);
+		List<String> queueUrls = result.getQueueUrls();
+		if (queueUrls.isEmpty()) 
+		{
+			System.out.println("No SQS Queue Found");
+		}
+		queueUrls.stream().forEach(queueUrl -> System.out.println("\nThe following Queue URL was found:"+queueUrl) );
 	}
 	
 	public static void sendMessage()
 	{
+		System.out.println("\nSending Message on SQS");
 		SendMessageRequest sendMessageRequest = new SendMessageRequest(queueResult.getQueueUrl(),TEST_MESSAGE );
 		Map<String, MessageAttributeValue> messageAttributesMap = new HashMap<>();
 		messageAttributesMap.put("MessageName", new MessageAttributeValue().withDataType("String").withStringValue("test message"));
 		sendMessageRequest.setMessageAttributes(messageAttributesMap);
 		SQS.sendMessage(sendMessageRequest);
-		System.out.println("Message Sent");
+		System.out.println("\nMessage Sent");
 	}
 
 	public static void deleteQueue() 
 	{
 		SQS.deleteQueue(queueResult.getQueueUrl());
-		System.out.println("Deleted queue:"+QUEUE_NAME);
+		System.out.println("\nDeleted queue:"+QUEUE_NAME);
 	}
 	
 	public static void receiveQueueMessages()
@@ -66,7 +72,7 @@ public class SQSQueueEventsHandler
 		
 		for(Message message : messages)
 		{
-			System.out.println(message.getBody());
+			System.out.println("\n"+message.getBody());
 		}
 	}
 	
@@ -74,6 +80,6 @@ public class SQSQueueEventsHandler
 	{
 		GetQueueAttributesResult result = SQS.getQueueAttributes(queueResult.getQueueUrl(),Arrays.asList("ApproximateNumberOfMessages") );
 		Integer numberOfMessages = Integer.parseInt(result.getAttributes().get("ApproximateNumberOfMessages"));
-		System.out.println("Number of Messages in Queue:"+numberOfMessages); 
+		System.out.println("\nNumber of Messages in Queue:"+numberOfMessages); 
 	}
 }
